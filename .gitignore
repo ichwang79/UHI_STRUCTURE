@@ -1,0 +1,7 @@
+# derived from the two data records; rebuilt by scripts/make_inputs.py
+data/
+figures/
+
+__pycache__/
+*.pyc
+.DS_Store
