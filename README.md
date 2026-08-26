@@ -9,7 +9,7 @@ own beyond what it derives.
 
 | | DOI | Licence |
 |---|---|---|
-| **This code** | assigned on first release | MIT |
+| **This code** | [10.5281/zenodo.22109010](https://doi.org/10.5281/zenodo.22109010) | MIT |
 | **Air-temperature UHI record** | [10.5281/zenodo.22071655](https://doi.org/10.5281/zenodo.22071655) | CC-BY-4.0 |
 | **Companion city panels** | [10.5281/zenodo.22108288](https://doi.org/10.5281/zenodo.22108288) | CC-BY-4.0 |
 
