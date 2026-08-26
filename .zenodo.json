@@ -1,0 +1,37 @@
+{
+  "title": "UHI_STRUCTURE: analysis code for the empirical structure of the air-temperature urban heat island",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Hwang, In Chang",
+      "affiliation": "The Seoul Institute",
+      "orcid": "0000-0002-4312-2476"
+    }
+  ],
+  "description": "<p>Analysis code for the empirical structure of the air-temperature urban heat island: how its level scales across cities, how its trend moves within a city over time, and how the two separate by element and by region.</p><p>The code reads two published data records and derives everything else &mdash; the within-city epoch panels, the level-model fits, the robustness battery and the display items. It contains no data of its own.</p><p>Requires the air-temperature UHI record (concept DOI 10.5281/zenodo.22006932) and the companion city panels (concept DOI 10.5281/zenodo.22108287). Paths resolve through <code>scripts/uhi_paths.py</code>, so the two records may be unpacked into one directory or kept apart.</p>",
+  "keywords": [
+    "urban heat island",
+    "GHCN-Daily",
+    "air temperature",
+    "population scaling",
+    "urban density",
+    "panel regression",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.22006932",
+      "relation": "isSupplementTo",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.22108287",
+      "relation": "isSupplementTo",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    }
+  ]
+}
