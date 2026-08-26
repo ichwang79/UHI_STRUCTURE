@@ -7,11 +7,13 @@ element and by region.
 The code reads two published data records and writes everything else. It contains no data of its
 own beyond what it derives.
 
+Each DOI below is a Zenodo concept DOI and resolves to the current version.
+
 | | DOI | Licence |
 |---|---|---|
-| **This code** | [10.5281/zenodo.22109010](https://doi.org/10.5281/zenodo.22109010) | MIT |
-| **Air-temperature UHI record** | [10.5281/zenodo.22071655](https://doi.org/10.5281/zenodo.22071655) | CC-BY-4.0 |
-| **Companion city panels** | [10.5281/zenodo.22108288](https://doi.org/10.5281/zenodo.22108288) | CC-BY-4.0 |
+| **This code** | [10.5281/zenodo.22109009](https://doi.org/10.5281/zenodo.22109009) | MIT |
+| **Air-temperature UHI record** | [10.5281/zenodo.22006932](https://doi.org/10.5281/zenodo.22006932) | CC-BY-4.0 |
+| **Companion city panels** | [10.5281/zenodo.22108287](https://doi.org/10.5281/zenodo.22108287) | CC-BY-4.0 |
 
 ## Getting the data
 
