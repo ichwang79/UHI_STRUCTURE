@@ -206,17 +206,16 @@ def build(p3: Path, sd: Path) -> None:
     rep.to_csv(OUT / "representativeness.csv", index=False)
 
     # ---- 2b. derived city tables carried straight through from the deposits ---------
-    # These are inputs to the level model and the seasonal check. They are distributed rather
+    # These are inputs to the level model and the cross-instrument check. They are distributed rather
     # than rebuilt here because they carry ancillary columns (NDVI, wind, coastal distance,
     # elevation and their z-scores) assembled from the satellite panel.
-    for name in ("uhi_level_model_cities.csv", "seasonal_uhi_cities.csv",
-                 "yceo_city_panel.csv"):
+    for name in ("uhi_level_model_cities.csv", "yceo_city_panel.csv"):
         src = p3 / name
         if Path(src).exists():
             pd.read_csv(src).to_csv(OUT / name, index=False)
         else:
             print(f"  note: {name} not found in the deposits; "
-                  "the level-model and seasonal scripts will not run without it")
+                  "the level-model and cross-instrument scripts will not run without it")
 
     # ---- 3. city_station_match.csv (long-record) ------------------------------------
     match = pd.read_csv(p3 / "city_station_match_longrecord.csv",
@@ -254,13 +253,23 @@ def build(p3: Path, sd: Path) -> None:
     #
     # The released construction is kept alongside it as hist_stage3_panel_varying.csv so the
     # difference stays visible. Both are built from the release alone.
-    hp = pd.read_csv(p3 / "hist_predictors.csv") if (p3 / "hist_predictors.csv").exists() \
-        else full[["CityID", "year", "ln_popdensity", "frac_urban_built", "ln_gdp_c"]]
+    # hist_predictors.csv is required, not optional. Its frac_built is the GHS built-up SURFACE
+    # share (mean ~0.19); the satellite panel's frac_urban_built is the MODIS urban-class share
+    # (mean ~0.81), and within a city the two correlate -0.26. They are different measurements of
+    # built-up land, not one variable under two names, so the within-city trend model cannot take
+    # whichever happens to be present.
+    if not (p3 / "hist_predictors.csv").exists():
+        raise FileNotFoundError(
+            f"{p3 / 'hist_predictors.csv'} is missing. It carries frac_built, the GHS built-up "
+            "surface share the within-city trend model controls for. Do not substitute "
+            "frac_urban_built (the MODIS urban-class share): it is a different measurement. "
+            "Fetch hist_predictors.csv from the companion deposit.")
+    hp = pd.read_csv(p3 / "hist_predictors.csv")
+    if "frac_built" not in hp.columns:
+        raise RuntimeError("hist_predictors.csv does not carry frac_built; see the note above.")
 
     def _attach(dv):
         h = dv.merge(hp, on=["CityID", "year"], how="left")
-        if "frac_built" not in h.columns and "frac_urban_built" in h.columns:
-            h["frac_built"] = h["frac_urban_built"]
         # The GDP spline basis ships with the release; regenerating it from knot percentiles
         # reproduces it only to ~3 decimals, which is enough to move a p-value in the fourth.
         have = {"g1", "g2", "g3"} <= set(h.columns) and h[["g1", "g2", "g3"]].notna().any().all()

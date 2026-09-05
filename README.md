@@ -28,7 +28,9 @@ Every script resolves a filename the same way — the air record first, then the
 `scripts/uhi_paths.py`. Passing `--air` and `--companion` on the command line overrides the
 environment. If both records are unpacked into one directory, set both variables to it.
 
-Requirements: Python 3.9+, `numpy`, `pandas`, `scipy`, `statsmodels`, `linearmodels`, `matplotlib`.
+Requirements: Python 3.9+, `numpy`, `pandas`, `scipy`, `statsmodels`, `linearmodels`, `matplotlib` (`requests` only for `fetch_seasonal.py`).
+
+`si_robustness_suite.py` also reads the city groupings; point `UHI_AIR_GROUPINGS` at the companion record, which ships `city_groupings.csv`.
 
 ## Order of operations
 
@@ -54,7 +56,7 @@ Then, in this order:
 |---|---|
 | `hist_stage3.py` | the within-city epoch panel under all three rural-reference constructions |
 | `hist_stage3_daynight.py` | the same panel split into nocturnal and daytime channels |
-| `si_robustness_battery.py` | the full diagnostic suite on the within-city trend — 84 checks, ~15 min |
+| `si_robustness_suite.py` | the full diagnostic suite on the within-city trend — 84 checks, ~15 min |
 | `si_reference_sweeps.py` | the rural-annulus, screen-radius and lapse-rate sweeps |
 
 ## Analysis
@@ -67,11 +69,32 @@ Each reads `data/inputs/` and prints its results; the level-model scripts need o
 | `mundlak_ladder.py` | between- and within-city density coefficients estimated jointly |
 | `extreme_bounds.py` | which drivers survive an extreme-bounds search over covariate combinations |
 | `gdp_rcs.py` | the functional form of the income term, by nested tests and AIC |
-| `density_shape_check.py` | whether the density relationship is linear in logs |
-| `seasonal_uhi.py` | UHI by season and climate zone |
 | `income_over_time.py` | how the income gradient moves across epochs |
 | `rural_reference_longdiff.py` | the long-difference check on the rural reference |
 | `yang2024_stage3_ablation.py` | the within-city response reproduced on an independent canopy-UHI product |
+
+
+## Supplementary analyses added in version 1.1
+
+These reproduce the Supplementary Information of the manuscript "Bigger cities have larger heat islands, denser ones do not, and growing ones get hotter" and read
+version 3 of the companion record (GEE extractions, the GHS-WUP-MTUC subset and crosswalks, and the
+seasonal station-season file and panels). They resolve paths through `scripts/supplement_paths.py`
+(`UHI_AIR_DATA`, `UHI_AIR_COMPANION`, optional `UHI_CODE_INPUTS`, `UHI_CODE_SCRIPTS`, `UHI_EXTRA_INPUTS`).
+
+| script | reproduces |
+|---|---|
+| `building_volume.py` | building-volume row of Table 1 and Supplementary Table S6 (volume part) |
+| `land_cover.py` | land-cover rows of Supplementary Table S6 |
+| `regional_gap.py` | Supplementary Table S2 (the regional gap under nine designs) and the room-to-grow split of S1.4 |
+| `level_intervals.py` | Supplementary Table S3, the Mundlak terms by element in Table 1, Supplementary Table S5, the seasonal level means of S1.7 |
+| `panel_intervals.py` | the balanced-panel slopes and income-spline percentiles of Supplementary Table S4, the Driscoll–Kraay and GHCN-M intervals of Supplementary Table S1 |
+| `seasonal_table.py` | Table 2 and the seasonal rows of Supplementary Table S2 |
+| `seasonal_within_city.py`, `seasonal_within_city_1975.py` | the seasonal city-epoch panels from `seasonal_by_elem.csv` |
+| `fetch_seasonal.py` | rebuilds `seasonal_by_elem.csv` from NOAA GHCN-Daily (about 11 GB streamed; the file ships with the companion record) |
+
+Version 1.1 also drops three scripts the manuscript no longer uses (`density_shape_check.py`,
+`seasonal_uhi.py`, `make_fig_replication.py`) and the satellite cross-check printout at the end of
+`oke_analysis.py`; the numbers that mattered from them are in Supplementary Table S1.
 
 ## Figures
 
@@ -81,8 +104,7 @@ filenames across the two records; neither is run directly.
 | script | output |
 |---|---|
 | `make_main_figures.py` | the main display items |
-| `make_ncc_fig3_regional.py` | the regional structure figure — needs `si_robustness_battery.py` first |
-| `make_fig_replication.py` | independent-archive and cross-instrument replication |
+| `make_fig3_regional.py` | the regional structure figure — needs `si_robustness_suite.py` first |
 
 ## What this cannot rebuild
 
@@ -101,7 +123,7 @@ Stated plainly, because a reader will otherwise look for it.
   the monthly files come from NOAA/NCEI directly.
 - **The rural-reference construction figure.** Its input table compares the three constructions
   across start years and is not produced by any script here; `si_reference_sweeps.py` and the
-  `window` rows of `si_robustness_battery.py` cover the same ground numerically. The figure is
+  `window` rows of `si_robustness_suite.py` cover the same ground numerically. The figure is
   not part of the submitted display items.
 
 ## Licence

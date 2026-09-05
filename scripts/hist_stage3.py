@@ -42,15 +42,15 @@ from scipy.spatial import cKDTree
 from linearmodels.panel import PanelOLS
 
 # Paths resolve relative to this file, or from the environment, so the scripts run from a clone
-# without editing. UHI_AIR_DATA points at the unpacked GHCN-Daily station UHI release (Paper 3's
+# without editing. UHI_AIR_DATA points at the unpacked GHCN-Daily station UHI release (the data descriptor's
 # Zenodo deposit); UHI_AIR_COMPANION at the companion deposit (predictors and satellite panel).
 # Everything this script needs is in those two.
 import os as _os
 from pathlib import Path as _P
 _HERE = _P(__file__).resolve().parent
-RELEASE = str(_P(_os.environ.get("UHI_AIR_DATA", _HERE.parent.parent / "Paper3_ESSD" / "data")))
+RELEASE = str(_P(_os.environ.get("UHI_AIR_DATA", _HERE.parent / "data" / "air_record")))
 INPUTS  = str(_HERE.parent / "data" / "inputs")
-COMPANION = str(_P(_os.environ.get("UHI_AIR_COMPANION", _HERE.parent / "data" / "reproduction_extras" / "companion")))
+COMPANION = str(_P(_os.environ.get("UHI_AIR_COMPANION", _HERE.parent / "data" / "companion")))
 
 EP = [1975,1980,1985,1990,1995,2000,2005,2010,2015,2020]
 GY = [1990,1995,2000,2005,2010,2015,2020]

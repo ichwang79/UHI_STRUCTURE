@@ -1,12 +1,12 @@
 """Measurement sweeps for the Supplementary Information, rebuilt under the anomaly rural reference.
 
-The checks in `si_robustness_battery.py` all run on the deposited epoch panel and so hold the
+The checks in `si_robustness_suite.py` all run on the deposited epoch panel and so hold the
 measurement fixed. These three do the opposite: they rebuild the heat island from the station
 record with one measurement choice moved at a time, and re-estimate. The choices are the lapse rate
 applied to the urban-minus-rural height difference, the radius of the clean-rural contamination
 screen, and the rural annulus itself.
 
-The estimator is the corrected Mundlak form of Section 4.3, as in the battery, so the numbers here
+The estimator is the corrected Mundlak form of Section 4.3, as in the suite, so the numbers here
 are comparable with those there. The reference is the anomaly construction of Section 4.1
 throughout: a least-squares fit of T[s,t] = alpha_s + tau_t over all of a city's clean-rural
 stations, with R(t) = median_s(alpha_s) + tau_t.
@@ -24,7 +24,7 @@ import statsmodels.formula.api as smf
 import os as _os
 from pathlib import Path as _P
 _HERE = _P(__file__).resolve().parent
-RELEASE = str(_P(_os.environ.get("UHI_AIR_DATA", _HERE.parent.parent / "Paper3_ESSD" / "data")))
+RELEASE = str(_P(_os.environ.get("UHI_AIR_DATA", _HERE.parent / "data" / "air_record")))
 INPUTS  = str(_HERE.parent / "data" / "inputs")
 EXTRA   = str(_P(_os.environ.get("UHI_EXTRA", _HERE.parent / "data" / "external")))
 
@@ -40,7 +40,7 @@ LON = {r.id: r.lon for r in meta.itertuples()}
 # The contamination screen is built against every GHS-UCDB urban centre, not only the ones this
 # paper's cities are matched to. The v2 companion release screens against the full 11,422-centre
 # database rather than the 11,161-centre working list its earlier version carried; the difference
-# affects five of 7,657 rural stations (Paper 3 Sect. 2.4). CENTROIDS resolves to the rebuilt
+# affects five of 7,657 rural stations (see the data descriptor). CENTROIDS resolves to the rebuilt
 # data_rebuilt/ copy if present, so this reproduces the deposited v2 screen; it falls back to the
 # release's own city_centroids.csv otherwise.
 _centroids_v2 = _P(RELEASE).parent / "data_rebuilt" / "city_centroids.csv"
@@ -57,7 +57,7 @@ for r in adf.itertuples():
     if pd.notna(r.tavg):
         TA.setdefault(r.id, {})[r.year] = r.tavg
 match = pd.read_csv(D + "city_station_match_broad.csv", dtype={"urban": str, "rural": str})
-_COMPANION = str(_P(_os.environ.get("UHI_AIR_COMPANION", _HERE.parent / "data" / "reproduction_extras" / "companion")))
+_COMPANION = str(_P(_os.environ.get("UHI_AIR_COMPANION", _HERE.parent / "data" / "companion")))
 pred = pd.read_csv(f"{_COMPANION}/hist_predictors.csv")
 
 _c = {}
@@ -200,9 +200,9 @@ if __name__ == "__main__":
           f"{mm.uhi_obs_near.corr(mm.uhi_obs_mean):.3f}, median difference {np.median(dm):+.3f} C, "
           f"mean |difference| {np.abs(dm).mean():.3f} C", flush=True)
 
-    # The paper headlines the 2000-2020 window (population-back-cast credibility, Section 3), with
+    # The paper's primary window is 2000-2020 (population-back-cast credibility, Section 3), with
     # the full 1975-2020 record carried as a robustness check. These three sweeps therefore run on
-    # both: mundlak(d) below is the full-record estimate, mundlak(d[d.year >= 2000]) the headline.
+    # both: mundlak(d) below is the full-record estimate, mundlak(d[d.year >= 2000]) the primary-windowe.
     def mundlak2000(d):
         return mundlak(d[d.year >= 2000]) if d is not None else None
 

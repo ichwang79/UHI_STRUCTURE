@@ -14,7 +14,7 @@ observation is.
 Four specifications are fitted for each of the three UHI elements, as an ablation: the full
 specification (density, the GDP spline, built-up fraction), each control dropped in turn, and
 density alone ("Minus both"), which is the specification comparable to the paper's own
-`si_robustness_battery.py` density-only rows. All are entity+year fixed-effects panel regressions,
+`si_robustness_suite.py` density-only rows. All are entity+year fixed-effects panel regressions,
 clustered on UrbanId.
 
 Output: data/results/yang2024_stage3_ablation_full_regressions.csv

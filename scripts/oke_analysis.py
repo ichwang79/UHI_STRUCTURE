@@ -12,9 +12,9 @@ Sections:
   F  development phase (size + temporal)                     -> oke_size_law_by_development_phase.csv
   G  literature recalibration (Oke1973/Karl1988) to our form -> oke_literature_{recalibration,matched_coverage}.csv
   H  coverage-bias partial correction (capped-60%)           -> coverage_corrected_uhi_premium.csv
-  I  between-city density battery                            -> density_{between_element,incremental_covariates,by_climate_zone}.csv
+  I  between-city density checks                            -> density_{between_element,incremental_covariates,by_climate_zone}.csv
   J  within-city density (panel, 2000-2020 observation era)  -> density_within_city_sensitivity.csv
-  K  window sweeps + coverage-by-year + SUHI cross-check     (printed)
+  K  window sweeps + coverage-by-year                       (printed)
 """
 import os, warnings, numpy as np, pandas as pd
 warnings.filterwarnings("ignore")
@@ -37,9 +37,7 @@ pr["uhi_max"] = 2*pr.uhi_tavg - pr.uhi_tmin                       # daytime UHI 
 rep  = pd.read_csv(IN+"representativeness.csv")[["CityID","pop","abslat","income","latband","kop","sampled"]]
 mtch = pd.read_csv(IN+"city_station_match.csv")[["city_id","urban_km","n_rural"]]
 lst  = pd.read_csv(IN+"uhi_panel_koppen_final_reconstructed.csv")
-lst["suhi_night"] = lst.u_LST_night - (lst.r_LST_night + 6.5/1000*(lst.r_ELEV - lst.u_ELEV))
-lstg = lst.groupby("CityID").agg(u_ELEV=("u_ELEV","first"), coast=("coastal_dist_km","first"),
-                                 suhi_night=("suhi_night","mean")).reset_index()
+lstg = lst.groupby("CityID").agg(u_ELEV=("u_ELEV","first"), coast=("coastal_dist_km","first")).reset_index()
 d = pr.merge(rep, on="CityID", how="left").merge(mtch, on="city_id", how="left").merge(lstg, on="CityID", how="left")
 # the level sample is the cities carrying analysis covariates; without this restriction the
 # fits run on ~37 extra cities and none of the three element slopes matches the reported table
@@ -86,7 +84,7 @@ LADDER=[("M0 size only",[]),("M1 +climate zone",["koppen"]),("M2 +abs latitude",
  ("M7 +elevation",["koppen","abslat","income","ln_gdp_c","ln_popdensity","frac_urban_built","u_ELEV"]),
  ("M8 +coastal distance",["koppen","abslat","income","ln_gdp_c","ln_popdensity","frac_urban_built","u_ELEV","coast"]),
  ("M9 +station siting",["koppen","abslat","income","ln_gdp_c","ln_popdensity","frac_urban_built","u_ELEV","coast","urban_km","n_rural"])]
-def element_battery(Y, suffix):
+def element_checks(Y, suffix):
     S=d.dropna(subset=[Y]+ALLV).reset_index(drop=True); g=pd.factorize(S.country)[0]; y=S[Y].values
     kd=pd.get_dummies(S.koppen.astype(str),prefix="k",drop_first=True).astype(float)
     idd=pd.get_dummies(S.income.astype(str),prefix="inc",drop_first=True).astype(float)
@@ -114,7 +112,7 @@ def element_battery(Y, suffix):
         dr.append([f"size-slope, rural-ref >={lo}",round(mm.params[1],3),round(mm.pvalues[1],3),"",len(s)])
     pd.DataFrame(dr,columns=["test","estimate","p","mean_uhi","n"]).to_csv(OUT+f"oke_station_distance_sensitivity{suffix}.csv",index=False)
 for Y,suf in [("uhi_tmin",""),("uhi_tavg","_MEAN"),("uhi_max","_MAX")]:
-    element_battery(Y,suf)
+    element_checks(Y,suf)
 
 # ---------- F. development phase (size + temporal) ----------
 def sl(sub,y):
@@ -170,7 +168,7 @@ hr.append(["RAW_SAMPLE_MEAN",round(raw,3),round(raw,3),len(samp)])
 hr.append(["CANONICAL_capped60_mean","",round(np.mean([r[2] for r in hr[:3]]),3),""])
 pd.DataFrame(hr,columns=["raking_scheme","capped_full_uhi_C","capped60_uhi_C","effective_sample_size"]).to_csv(OUT+"coverage_corrected_uhi_premium.csv",index=False)
 
-# ---------- I. between-city density battery ----------
+# ---------- I. between-city density checks ----------
 D="ln_popdensity"; er=[]
 for y,t in [("uhi_tmin","night"),("uhi_tavg","mean"),("uhi_max","day")]:
     s=d.dropna(subset=[y,D,"lp"]); m1=cl(s,f"{y} ~ {D}"); m2=cl(s,f"{y} ~ {D} + lp")
@@ -228,7 +226,7 @@ if HAVE_PANEL:
             except Exception: pass
     pd.DataFrame(rows,columns=["test","group","density_slope","SE","p","n_obs","n_cities"]).to_csv(OUT+"density_within_city_sensitivity.csv",index=False)
 
-# ---------- K. printed diagnostics: window sweep, coverage-by-year, SUHI cross-check ----------
+# ---------- K. printed diagnostics: window sweep, coverage-by-year ----------
 print("=== SIZE-LAW fits (per log10 pop) ==="); print(pd.read_csv(OUT+"oke_size_law_fits.csv").to_string(index=False))
 if HAVE_PANEL:
     print("\n=== start-year window sweep (size between vs density within), same panel ===")
@@ -244,7 +242,4 @@ if HAVE_PANEL:
         print(f"  {lo}-2020: SIZE {sb:+.3f}(p{sp:.3f})  DENSITY {dm.params['ln_popdensity']:+.3f}(p{dm.pvalues['ln_popdensity']:.3f})")
 a=pd.read_csv(IN+"annual_tavg.csv"); print("\n=== coverage by year (reporting stations) ===")
 print(a.groupby("year").id.nunique().reindex([1990,1995,2000,2005,2010,2015,2020]).to_string())
-M=d.dropna(subset=["uhi_tmin","suhi_night"]); import numpy as _np
-print(f"\n=== SUHI cross-check: station night air-UHI vs satellite night SUHI (n={len(M)}) ===")
-print(f"  r={_np.corrcoef(M.uhi_tmin,M.suhi_night)[0,1]:.3f}  bias(air-sat)={(M.uhi_tmin-M.suhi_night).mean():+.2f}C")
 print("\nDONE — all result CSVs regenerated in", OUT)

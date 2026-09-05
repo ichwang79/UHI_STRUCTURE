@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-NCC-draft Fig. 3: regional structure -- the size law generalizes, the density
+Fig. 3: regional structure -- the size law generalizes, the density
 trend does not. Two panels on the same house style as make_main_figures.py.
 
   (a) size-law slope by region (deposited literature-comparison CSV; night
       element except East Asia, where the nocturnal sample is too small to
       fit and the manuscript reports the annual mean instead)
   (b) within-city density-trend regional-interaction model: rest-of-world
-      coefficient vs. the North American excess, headline 2000-2020 window
-      (data/results/si_robustness_battery.csv, rows tagged "region").
+      coefficient vs. the North American excess, primary 2000-2020 window
+      (data/results/si_robustness_suite.csv, rows tagged "region").
 
 Reads only deposited result tables; no estimation happens here.
 """
@@ -26,17 +26,17 @@ DATA, FIG = ROOT / "data", ROOT / "figures"
 fs.use()
 
 
-def figure_regional(out=FIG / "Fig3_NCC_regional.png"):
+def figure_regional(out=FIG / "Fig3_regional.png"):
     lit = pd.read_csv(DATA / "results" / "oke_literature_matched_coverage.csv")
     ours = lit[lit.source.str.startswith("OURS")]
 
     size_rows = [
         ("North America", float(ours[(ours.region == "North America") & (ours.uhi_time == "night")].slope_per_tenfold_ourform.iloc[0]), 361, "night"),
         ("Europe", float(ours[(ours.region == "Europe") & (ours.uhi_time == "night")].slope_per_tenfold_ourform.iloc[0]), 249, "night"),
-        ("East Asia", 0.26, 141, "mean"),
+        ("Asia", 0.26, 141, "mean"),
     ]
 
-    reg = pd.read_csv(DATA / "results" / "si_robustness_battery.csv")
+    reg = pd.read_csv(DATA / "results" / "si_robustness_suite.csv")
     reg = reg[reg.iloc[:, 0] == "region"]
     row_col = reg.columns[1]
 
@@ -65,8 +65,6 @@ def figure_regional(out=FIG / "Fig3_NCC_regional.png"):
     a.set_xlabel("size-law slope (°C per tenfold population)")
     a.spines["left"].set_visible(False); a.tick_params(axis="y", length=0)
     fs.panel_label(a, "a")
-    fs.annotate(a, .98, .10, "positive in every\nregion sampled", ha="right", va="bottom",
-                color=fs.BLUE, size=7.3)
 
     # (b) within-city density trend, regional-interaction model
     b = ax[1]
@@ -75,8 +73,8 @@ def figure_regional(out=FIG / "Fig3_NCC_regional.png"):
     yb = np.arange(len(labs_b))[::-1]
     b.barh(yb, vals, xerr=[1.96 * s for s in ses], height=.5, color=fs.ORANGE,
            ecolor="#1a1a1a", capsize=3, zorder=3)
-    for y, v, p in zip(yb, vals, ps):
-        b.text(v + (0.11 if v >= 0 else -0.11), y,
+    for y, v, p, se in zip(yb, vals, ps, ses):
+        b.text(v + 1.96 * se + 0.03 if v >= 0 else v - 1.96 * se - 0.03, y,
                f"{v:+.3f} (p = {p:.2g})", fontsize=7.3, va="center",
                ha="left" if v >= 0 else "right", color=fs.ORANGE)
     b.axvline(0, color=fs.GREY, lw=.6, zorder=1)
@@ -86,12 +84,10 @@ def figure_regional(out=FIG / "Fig3_NCC_regional.png"):
     b.set_xlabel("within-city density trend\n(°C per log-density, 2000–2020)")
     b.spines["left"].set_visible(False); b.tick_params(axis="y", length=0)
     fs.panel_label(b, "b")
-    fs.annotate(b, .5, .04, "effect identified in North America only", ha="center", va="bottom",
-                color=fs.ORANGE, size=7.3)
 
     fig.savefig(out)
     plt.close(fig)
-    print(f"  Fig 3 (NCC)  size law: NA {size_rows[0][1]:+.2f}, EU {size_rows[1][1]:+.2f}, "
+    print(f"  Fig 3  size law: NA {size_rows[0][1]:+.2f}, EU {size_rows[1][1]:+.2f}, "
           f"EA {size_rows[2][1]:+.2f}; density trend: RoW {row_c:+.3f} (p={row_p:.2g}), "
           f"NA excess {na_c:+.3f} (p={na_p:.2g})")
 

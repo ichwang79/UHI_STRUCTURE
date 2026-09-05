@@ -18,7 +18,7 @@ manufactures an equality rejection that the corrected form does not support.
 Income enters only on 2000-2020: GHS per-capita GDP does not extend back over the full record, so
 the income rungs have no ten-epoch counterpart. That is a data boundary, not a result.
 
-The four checks under "specification" in si_robustness_battery.py are the same estimates; this
+The four checks under "specification" in si_robustness_suite.py are the same estimates; this
 script exists so that the ladder as printed in the paper comes from one place.
 
 Run:  python mundlak_ladder.py

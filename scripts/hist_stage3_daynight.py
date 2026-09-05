@@ -54,15 +54,15 @@ from linearmodels.panel import PanelOLS
 from scipy.spatial import cKDTree
 
 # Paths resolve relative to this file, or from the environment, so the scripts run from a clone
-# without editing. UHI_AIR_DATA points at the unpacked GHCN-Daily station UHI release (Paper 3's
+# without editing. UHI_AIR_DATA points at the unpacked GHCN-Daily station UHI release (the data descriptor's
 # Zenodo deposit); UHI_AIR_COMPANION at the companion deposit, which is where hist_predictors.csv
 # actually lives.
 import os as _os
 from pathlib import Path as _P
 _HERE = _P(__file__).resolve().parent
-RELEASE = str(_P(_os.environ.get("UHI_AIR_DATA", _HERE.parent.parent / "Paper3_ESSD" / "data")))
+RELEASE = str(_P(_os.environ.get("UHI_AIR_DATA", _HERE.parent / "data" / "air_record")))
 INPUTS  = str(_HERE.parent / "data" / "inputs")
-COMPANION = str(_P(_os.environ.get("UHI_AIR_COMPANION", _HERE.parent / "data" / "reproduction_extras" / "companion")))
+COMPANION = str(_P(_os.environ.get("UHI_AIR_COMPANION", _HERE.parent / "data" / "companion")))
 
 
 warnings.filterwarnings("ignore")
@@ -235,7 +235,7 @@ def main():
               ("M2 +built", ["ln_popdensity", "ln_gdp_c", "frac_built"]),
               ("M3 +GDP spline", ["ln_popdensity", "g1", "g2", "g3", "frac_built"])]
     rows = []
-    for window_lab, sub in [("2000-2020, the paper's headline window", d[d.year >= 2000]),
+    for window_lab, sub in [("2000-2020, the paper's primary window", d[d.year >= 2000]),
                             ("1975-2020, the full epoch panel", d)]:
         print(f"\n{'=' * 82}\nWITHIN-CITY density model  --  {window_lab}\n{'=' * 82}")
         for lab in ("day", "mean", "night"):

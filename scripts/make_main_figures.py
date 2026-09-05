@@ -46,7 +46,7 @@ def figure_structure(out=FIG / "Fig1.png"):
     # required >=3 epochs, which does drop informative cities and measurably shifts the slope away
     # from Table 1's own value.
 
-    # Panel (b) shows the headline estimator rather than an illustrative stand-in. Sweeping out
+    # Panel (b) shows the primary-windowe estimator rather than an illustrative stand-in. Sweeping out
     # city AND year effects by alternating projections (Frisch-Waugh-Lovell) leaves residuals
     # whose slope is the two-way fixed-effects coefficient itself, so the number on the figure
     # is the number in Table 1. Demeaning on the city alone, which leaves the common year
@@ -97,7 +97,7 @@ def figure_structure(out=FIG / "Fig1.png"):
     fs.panel_label(a, "b")
     fs.annotate(a, .02, .97,
                 f"{s2:+.2f} °C per ln unit (two-way fixed effects)\n"
-                f"{w.CityID.nunique()} cities, {len(w):,} city-years, 2000–2020",
+                f"{w.CityID.nunique()} cities, {len(w):,} city-epochs, 2000–2020",
                 color=fs.ORANGE)
     fig.savefig(out)
     plt.close(fig)
@@ -184,7 +184,7 @@ def figure_sizelaw(out=FIG / "Fig2.png"):
     a = fig.add_subplot(gs[:, 0])
     a.scatter(c.lp, c.uhi_tmin, s=4, alpha=.14, color=fs.ORANGE, lw=0, rasterized=True)
     xs = np.linspace(c.lp.quantile(.01), c.lp.quantile(.99), 40)
-    for _, r in fits.iterrows():
+    for _, r in fits[fits.uhi_measure.isin(ELEM)].iterrows():   # skip the common-sample row
         col, colr, lab, ls = ELEM[r.uhi_measure]
         a.plot(xs, r.intercept + r.slope_per_log10pop * xs, color=colr, lw=1.9,
                ls=ls, zorder=4)

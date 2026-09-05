@@ -35,7 +35,7 @@ own extreme-bounds table must be deposited and cited separately.
 
 Input :  data/inputs/uhi_level_model_cities.csv   (948 cities, one row each)
 Output:  data/eba_uhi_level.csv        (mean/TAVG,  Fig. 2e; --dv uhi)
-         data/eba_uhi_level_tmin.csv   (night/TMIN, §4.2 headline; --dv uhi_tmin)
+         data/eba_uhi_level_tmin.csv   (night/TMIN, §4.2, night; --dv uhi_tmin)
 """
 import argparse
 import itertools

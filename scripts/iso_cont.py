@@ -1,0 +1,23 @@
+# ISO3 -> continent, completing the continent lookup
+ISO_EXTRA = {
+"IND":"Asia","NGA":"Africa","PAK":"Asia","BGD":"Asia","EGY":"Africa","COD":"Africa","ETH":"Africa",
+"IRN":"Asia","VNM":"Asia","PHL":"Asia","IRQ":"Asia","COL":"South America","ZAF":"Africa","SDN":"Africa",
+"ARG":"South America","MAR":"Africa","AFG":"Asia","VEN":"South America","YEM":"Asia","AGO":"Africa",
+"THA":"Asia","GHA":"Africa","SAU":"Asia","TZA":"Africa","KEN":"Africa","MMR":"Asia","PER":"South America",
+"UGA":"Africa","DZA":"Africa","MOZ":"Africa","CIV":"Africa","CMR":"Africa","MDG":"Africa","NPL":"Asia",
+"SYR":"Asia","BFA":"Africa","MLI":"Africa","MWI":"Africa","ZMB":"Africa","SEN":"Africa","TCD":"Africa",
+"SOM":"Africa","NER":"Africa","ZWE":"Africa","RWA":"Africa","BEN":"Africa","BDI":"Africa","TUN":"Africa",
+"GIN":"Africa","SSD":"Africa","HTI":"North America","BOL":"South America","ECU":"South America",
+"GTM":"North America","HND":"North America","NIC":"North America","SLV":"North America","CRI":"North America",
+"PAN":"North America","DOM":"North America","CUB":"North America","JAM":"North America","PRY":"South America",
+"URY":"South America","LKA":"Asia","KHM":"Asia","LAO":"Asia","MNG":"Asia","UZB":"Asia","KAZ":"Asia",
+"TKM":"Asia","TJK":"Asia","KGZ":"Asia","AZE":"Asia","ARM":"Asia","GEO":"Asia","ISR":"Asia","JOR":"Asia",
+"LBN":"Asia","OMN":"Asia","QAT":"Asia","KWT":"Asia","BHR":"Asia","ARE":"Asia","PSE":"Asia","PRK":"Asia",
+"TWN":"Asia","HKG":"Asia","SGP":"Asia","MYS":"Asia","IDN":"Asia","BRN":"Asia","TLS":"Asia","PNG":"Oceania",
+"FJI":"Oceania","NZL":"Oceania","NCL":"Oceania","LBY":"Africa","MRT":"Africa","GMB":"Africa","GNB":"Africa",
+"SLE":"Africa","LBR":"Africa","TGO":"Africa","GAB":"Africa","COG":"Africa","CAF":"Africa","GNQ":"Africa",
+"ERI":"Africa","DJI":"Africa","BWA":"Africa","NAM":"Africa","LSO":"Africa","SWZ":"Africa","MUS":"Africa",
+"REU":"Africa","COM":"Africa","CPV":"Africa","STP":"Africa","SUR":"South America","GUY":"South America",
+"GUF":"South America","BLZ":"North America","TTO":"North America","BHS":"North America","BRB":"North America",
+"PRI":"North America","ABW":"North America","CUW":"North America","MTQ":"North America","GLP":"North America",
+"MDV":"Asia","BTN":"Asia","MAC":"Asia"}

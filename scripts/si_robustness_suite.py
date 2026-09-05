@@ -1,4 +1,4 @@
-"""The Supplementary Information's robustness battery for the within-city density trend.
+"""The Supplementary Information's robustness suite for the within-city density trend.
 
 Every check here is run on the anomaly-referenced epoch panel (`hist_stage3_panel.csv`), the
 construction adopted in Section 4.1. The earlier varying-reference panel is kept alongside it as
@@ -10,7 +10,7 @@ regressor is then split into a city mean and a deviation from it, and both enter
 standard errors clustered on the city. `within` is therefore the two-way fixed-effects estimate,
 `between` the cross-city one, and `eq_p` the test that one coefficient describes both.
 
-Output: data/results/si_robustness_battery.csv, one row per check, plus a printed log.
+Output: data/results/si_robustness_suite.csv, one row per check, plus a printed log.
 """
 from __future__ import annotations
 import os, warnings, math
@@ -21,11 +21,10 @@ from linearmodels.panel import PanelOLS
 
 warnings.filterwarnings("ignore")
 ROOT = Path(__file__).resolve().parent.parent
-# P3 is Paper 3's deposited release (city_station_match_broad.csv lives there); GROUPINGS is
-# reproduction_extras/groupings, where broad_groupings_cities.csv lives (continent/income/Köppen
-# lookup, not part of either Zenodo deposit -- see that folder's README).
-P3 = Path(os.environ.get("UHI_AIR_DATA", ROOT.parent / "Paper3_ESSD" / "data"))
-GROUPINGS = Path(os.environ.get("UHI_AIR_GROUPINGS", ROOT / "data" / "reproduction_extras" / "groupings"))
+# P3 is the air-temperature record (city_station_match_broad.csv lives there); GROUPINGS is the
+# folder holding city_groupings.csv (continent/income/Köppen lookup), which the companion record ships.
+P3 = Path(os.environ.get("UHI_AIR_DATA", ROOT / "data" / "air_record"))
+GROUPINGS = Path(os.environ.get("UHI_AIR_GROUPINGS", os.environ.get("UHI_AIR_COMPANION", ROOT / "data" / "companion")))
 RNG = np.random.default_rng(0)
 MIN_CITIES = 50   # a subgroup below this is reported as too small rather than estimated
 EP = [1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020]
@@ -143,9 +142,9 @@ def main():
     print("\n=== sample: is the North American dependence a power problem?")
     # A shrinking subsample can lose significance for two reasons: the estimate moves, or the
     # interval widens. These separate them, because the answer decides how the limit is reported.
-    # Run on both windows: the paper headlines 2000-2020, so that is the version quoted in the main
+    # Run on both windows: the paper's primary window is 2000-2020, so that is the version quoted in the main
     # text, with the full-record (m1) version carried alongside as a check that the collapse is not
-    # itself a headline-window artifact.
+    # itself a primary-window artifact.
     for window, base in (("2000-2020", m2), ("1975-2020", m1)):
         ss = base.dropna(subset=["uhi_obs", "ln_popdensity", "continent"]).copy()
         ss = ss.drop_duplicates(["CityID", "year"])
@@ -324,7 +323,7 @@ def main():
         rec("daynight", f"{ch} channel, 2000-2020", mundlak(sub[sub.year >= 2000]))
 
     out = pd.DataFrame(ROWS)
-    dest = ROOT / "data/results/si_robustness_battery.csv"
+    dest = ROOT / "data/results/si_robustness_suite.csv"
     out.to_csv(dest, index=False)
     print(f"\nsaved {len(out)} rows -> {dest}")
 
