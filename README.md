@@ -6,7 +6,7 @@ Set the paths once (see `supplement_paths.py`):
 
 ```bash
 export UHI_AIR_DATA=/path/to/air_record            # 10.5281/zenodo.22006932
-export UHI_AIR_COMPANION=/path/to/companion_v3     # 10.5281/zenodo.22108287, v3 or later
+export UHI_AIR_COMPANION=/path/to/companion_v3     # 10.5281/zenodo.22108287, v2 or later
 export UHI_CODE_INPUTS=/path/to/UHI_STRUCTURE/data/inputs
 export UHI_CODE_SCRIPTS=/path/to/UHI_STRUCTURE/scripts
 export UHI_EXTRA_INPUTS=$UHI_AIR_COMPANION                  # where the v3 files live (defaults to ../inputs)
