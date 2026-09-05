@@ -3,7 +3,7 @@
   UHI_AIR_COMPANION   the companion city panels (Zenodo 10.5281/zenodo.22108287, v2 or later)
   UHI_CODE_INPUTS     data/inputs of the UHI_STRUCTURE code deposit after make_inputs.py has run
   UHI_CODE_SCRIPTS    scripts/ of the UHI_STRUCTURE code deposit (for gdp_rcs.py)
-The extra inputs (GEE extractions, MTUC subset, crosswalks, seasonal panels) ship with version 3 of
+The extra inputs (GEE extractions, MTUC subset, crosswalks, seasonal panels) ship with version 2 of
 the companion record; UHI_EXTRA_INPUTS overrides where they are read from and defaults to UHI_AIR_COMPANION."""
 import os
 _here = os.path.dirname(os.path.abspath(__file__))
