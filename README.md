@@ -66,6 +66,7 @@ Each reads `data/inputs/` and prints its results; the level-model scripts need o
 | script | question |
 |---|---|
 | `oke_analysis.py` | the population-size law, by element, region, climate zone and development phase |
+| `size_law_diagnostics.py` | RESET, Breusch–Pagan with the HC3 slope, and the slope after dropping the 1% most influential cities (Cook's distance), with intervals — the diagnostic rows of Supplementary Table S1(a) |
 | `mundlak_ladder.py` | between- and within-city density coefficients estimated jointly |
 | `extreme_bounds.py` | which drivers survive an extreme-bounds search over covariate combinations |
 | `gdp_rcs.py` | the functional form of the income term, by nested tests and AIC |
