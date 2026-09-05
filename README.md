@@ -1,15 +1,15 @@
 # UHI_STRUCTURE v1.1 — supplementary scripts for the manuscript
 
 These scripts extend the v1.0.2 deposit. They read the two data records and the code deposit's
-`data/inputs/` (built by `make_inputs.py`), plus the version-2 additions to the companion record.
+`data/inputs/` (built by `make_inputs.py`), plus the files added to the companion record for the manuscript.
 Set the paths once (see `supplement_paths.py`):
 
 ```bash
 export UHI_AIR_DATA=/path/to/air_record            # 10.5281/zenodo.22006932
-export UHI_AIR_COMPANION=/path/to/companion        # 10.5281/zenodo.22108287, v2 or later
+export UHI_AIR_COMPANION=/path/to/companion        # 10.5281/zenodo.22108287
 export UHI_CODE_INPUTS=/path/to/UHI_STRUCTURE/data/inputs
 export UHI_CODE_SCRIPTS=/path/to/UHI_STRUCTURE/scripts
-export UHI_EXTRA_INPUTS=$UHI_AIR_COMPANION                  # where the version-2 files live (defaults to UHI_AIR_COMPANION)
+export UHI_EXTRA_INPUTS=$UHI_AIR_COMPANION                  # where the added files live (defaults to UHI_AIR_COMPANION)
 ```
 
 Run order is free; each script prints what it reproduces.
