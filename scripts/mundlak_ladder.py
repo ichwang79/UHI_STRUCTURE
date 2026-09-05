@@ -65,7 +65,7 @@ def mundlak(d, extra=()):
 
 
 def main():
-    p = pd.read_csv(IN + "hist_stage3_panel.csv")
+    p = pd.read_csv(IN + "within_city_panel.csv")
     windows = [("Model 1, 1975-2020, ten epochs", p),
                ("Model 2, 2000-2020, five epochs", p[p.year >= 2000])]
 

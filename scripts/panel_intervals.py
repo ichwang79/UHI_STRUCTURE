@@ -10,7 +10,7 @@ def ci(e, s): return f"{e:+.3f} (se {s:.3f}, 95% CI {e-1.96*s:+.2f} to {e+1.96*s
 
 print("== Driscoll-Kraay, two-way FE, 1975-2020, density only")
 from linearmodels.panel import PanelOLS
-P = pd.read_csv(IN + "hist_stage3_panel.csv")
+P = pd.read_csv(IN + "within_city_panel.csv")
 s = P.dropna(subset=["uhi_obs", "ln_popdensity"]).drop_duplicates(["CityID", "year"]).set_index(["CityID", "year"])
 for cov, kw in [("kernel", dict(kernel="bartlett")), ("clustered", dict(cluster_entity=True))]:
     f = PanelOLS(s["uhi_obs"], s[["ln_popdensity"]], entity_effects=True, time_effects=True, drop_absorbed=True).fit(cov_type=cov, **kw)

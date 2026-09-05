@@ -1,6 +1,6 @@
 """Seasonal within-city test for the regional gap (S1.7, Table 2).
 
-Builds the composition-free station UHI panel (hist_stage3.py construction, unchanged: 12 km
+Builds the composition-free station UHI panel (within_city_panel.py construction, unchanged: 12 km
 clean-rural screen, five-year window with >=3 valid years, >=3 references, alpha_s + tau_t
 least-squares reference, 6.5 C/km elevation correction) separately for each season (JJA, DJF)
 and element (TMIN, TMAX, TAVG) from seasonal_by_elem.csv, then estimates the within-city

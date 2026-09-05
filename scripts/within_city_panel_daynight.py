@@ -1,14 +1,14 @@
 """
 The epoch panel rebuilt element by element, so the trend model can be split by channel.
 
-hist_stage3.py builds the within-city panel from TAVG alone and writes one blended uhi_obs. That
+within_city_panel.py builds the within-city panel from TAVG alone and writes one blended uhi_obs. That
 is why the trend half of the analysis -- the half reported as regionally unstable and
 without out-of-sample skill -- has never been separated into day and night, while the level half
 has been separated since Section A of oke_analysis.py. This script repeats that construction
 exactly, changing one thing: the station means are taken for TMIN and TMAX as well as TAVG, so the
 panel carries three outcomes instead of one.
 
-Everything else is held fixed against hist_stage3.py so the blended column reproduces:
+Everything else is held fixed against within_city_panel.py so the blended column reproduces:
 
   clean-rural screen   a rural reference is kept only if it lies at least 12 km from any urban
                        centre in the working panel, not only from the city being measured
@@ -27,7 +27,7 @@ Rural referencing
 The reference was previously re-selected at every epoch, from whichever of a city's clean-rural
 stations had data in that epoch's window, so a station entering or leaving moved the median and
 that movement entered the within-city estimator as if the city had changed. The default here is
-the anomaly reference used by hist_stage3.py: tau is fitted from T[s,t] = alpha_s + tau_t over
+the anomaly reference used by within_city_panel.py: tau is fitted from T[s,t] = alpha_s + tau_t over
 ALL of the city's clean-rural stations, separately for tavg and tmin, and the reference is
 R(t) = median_s(alpha_s) + tau_t. Nothing is discarded -- the panel carries the same 878 cities as
 the varying construction, on a median of 31 references rather than 22 -- and the profile no
@@ -36,13 +36,13 @@ longer moves when the set turns over. Fitting tau per element preserves the iden
 
 The correction matters most where the set turns over most. Over 1975-2020 the night within-city
 density coefficient moves from -0.339 under the varying reference to +0.271 under the anomaly
-reference, the same reversal hist_stage3.py shows on TAVG.
+reference, the same reversal within_city_panel.py shows on TAVG.
 
 Inputs   annual_by_elem.csv, need_broad_meta.csv, city_station_match_broad.csv, city_centroids.csv
          from the deposited release, plus hist_predictors.csv from the companion deposit.
-Outputs  ../data/inputs/hist_stage3_panel_daynight.csv           the panel, three outcomes
-         ../data/inputs/hist_stage3_panel_daynight_varying.csv   the previous construction
-         ../data/results/hist_stage3_daynight.csv                the within-city fits by channel
+Outputs  ../data/inputs/within_city_panel_daynight.csv           the panel, three outcomes
+         ../data/inputs/within_city_panel_daynight_varying.csv   the previous construction
+         ../data/results/within_city_panel_daynight.csv                the within-city fits by channel
 """
 import argparse
 import os
@@ -213,7 +213,7 @@ def main():
           f"{resid.max():.2e} C over {len(have):,} rows"
           + ("" if resid.max() < 1e-9 else "   <-- STILL BROKEN"))
 
-    old = os.path.join(IN, "hist_stage3_panel.csv")
+    old = os.path.join(IN, "within_city_panel.csv")
     if os.path.exists(old):
         o = pd.read_csv(old)[["CityID", "year", "uhi_obs"]]
         j = d.merge(o, on=["CityID", "year"])
@@ -221,10 +221,10 @@ def main():
               f"median difference {np.median(j.uhi_mean - j.uhi_obs):+.4f} C, n = {len(j):,}")
 
     os.makedirs(IN, exist_ok=True)
-    d.to_csv(IN + "hist_stage3_panel_daynight.csv", index=False)
-    d_vary.to_csv(IN + "hist_stage3_panel_daynight_varying.csv", index=False)
-    print(f"  wrote {IN}hist_stage3_panel_daynight.csv          (anomaly reference, the default)")
-    print(f"  wrote {IN}hist_stage3_panel_daynight_varying.csv  (previous construction)")
+    d.to_csv(IN + "within_city_panel_daynight.csv", index=False)
+    d_vary.to_csv(IN + "within_city_panel_daynight_varying.csv", index=False)
+    print(f"  wrote {IN}within_city_panel_daynight.csv          (anomaly reference, the default)")
+    print(f"  wrote {IN}within_city_panel_daynight_varying.csv  (previous construction)")
     j = d[["CityID", "year", "uhi_night"]].merge(
         d_vary[["CityID", "year", "uhi_night"]], on=["CityID", "year"], suffixes=("_an", "_va"))
     print(f"  the two constructions: r = {j.uhi_night_an.corr(j.uhi_night_va):.4f} on "
@@ -258,8 +258,8 @@ def main():
             print(f"{name:18}{line}")
 
     os.makedirs(OUT, exist_ok=True)
-    pd.DataFrame(rows).to_csv(OUT + "hist_stage3_daynight.csv", index=False)
-    print(f"\nwrote {OUT}hist_stage3_daynight.csv")
+    pd.DataFrame(rows).to_csv(OUT + "within_city_panel_daynight.csv", index=False)
+    print(f"\nwrote {OUT}within_city_panel_daynight.csv")
 
 
 if __name__ == "__main__":

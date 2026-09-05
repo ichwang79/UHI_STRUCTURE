@@ -235,7 +235,7 @@ def build(p3: Path, sd: Path) -> None:
                                 "UHI_raw_global_pooled": "UHI_raw"})
     full.to_csv(OUT / "uhi_panel_koppen_final_reconstructed.csv", index=False)
 
-    # ---- 6. hist_stage3_panel.csv ---------------------------------------------------
+    # ---- 6. within_city_panel.csv ---------------------------------------------------
     # The epoch-level station UHI, joined to the GHS-UCDB predictors.
     #
     # The released city_uhi_epoch_panel.csv takes its rural reference from whichever of a
@@ -251,7 +251,7 @@ def build(p3: Path, sd: Path) -> None:
     # when the set turns over, and the median matches the level convention of the
     # median-of-stations estimator it replaces.
     #
-    # The released construction is kept alongside it as hist_stage3_panel_varying.csv so the
+    # The released construction is kept alongside it as within_city_panel_varying.csv so the
     # difference stays visible. Both are built from the release alone.
     # hist_predictors.csv is required, not optional. Its frac_built is the GHS built-up SURFACE
     # share (mean ~0.19); the satellite panel's frac_urban_built is the MODIS urban-class share
@@ -284,8 +284,8 @@ def build(p3: Path, sd: Path) -> None:
         return h
 
     _attach(pd.read_csv(p3 / "city_uhi_epoch_panel.csv")).to_csv(
-        OUT / "hist_stage3_panel_varying.csv", index=False)
-    _attach(build_anomaly_panel(p3)).to_csv(OUT / "hist_stage3_panel.csv", index=False)
+        OUT / "within_city_panel_varying.csv", index=False)
+    _attach(build_anomaly_panel(p3)).to_csv(OUT / "within_city_panel.csv", index=False)
 
     print(f"wrote {len(list(OUT.glob('*.csv')))} input files to {OUT}")
 

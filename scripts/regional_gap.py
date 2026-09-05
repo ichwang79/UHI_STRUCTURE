@@ -2,7 +2,7 @@
 split, in one script. Prints coefficient, p and n for every row so the table can be checked line by line.
 
 Inputs (set the paths below or the environment variables):
-  UHI_AIR_DATA / UHI_AIR_COMPANION   the two Zenodo records (hist_stage3_panel via the code deposit,
+  UHI_AIR_DATA / UHI_AIR_COMPANION   the two Zenodo records (within_city_panel via the code deposit,
                                      city_uhi_epoch_panel_daynight, city_groupings, city_predictors_panel)
   UHI_EXTRA_INPUTS                           folder with gee_built_volume_extraction.csv,
                                      gee_nightlights_extraction_cleaned.csv,

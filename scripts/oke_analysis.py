@@ -123,7 +123,7 @@ for g_,phase in [("Upper-middle","actively urbanizing"),("High","mature")]:
     sub=d[d.income==g_]
     for y,t in [("uhi_tmin","night"),("uhi_tavg","mean")]:
         b,p,n=sl(sub,y); rows.append(["income-stratified",g_,phase,t,b,p,n,round(sub.uhi_tavg.mean(),2)])
-pn=pd.read_csv(IN+"hist_stage3_panel.csv").dropna(subset=["uhi_obs"]).merge(rep[["CityID","pop","income"]],on="CityID",how="left")
+pn=pd.read_csv(IN+"within_city_panel.csv").dropna(subset=["uhi_obs"]).merge(rep[["CityID","pop","income"]],on="CityID",how="left")
 pn=pn.merge(pr[["CityID","country"]],on="CityID",how="left"); pn=pn[pn["pop"]>0].copy(); pn["lp"]=np.log10(pn["pop"])
 for lab,sub in [("early 1975-1997",pn[pn.year<=1997]),("recent 2006-2020",pn[pn.year>=2006])]:
     cs=sub.groupby("CityID").agg(u=("uhi_obs","mean"),lp=("lp","first"),country=("country","first")).reset_index().dropna()
@@ -198,7 +198,7 @@ pd.DataFrame(zr,columns=["koppen","climate","density_slope_ctrl_size","p","n"]).
 
 # ---------- J. within-city density (panel, 2000-2020 observation era) ----------
 if HAVE_PANEL:
-    p=pd.read_csv(IN+"hist_stage3_panel.csv").dropna(subset=["uhi_obs","ln_popdensity"])
+    p=pd.read_csv(IN+"within_city_panel.csv").dropna(subset=["uhi_obs","ln_popdensity"])
     km=pr[["CityID","koppen"]].drop_duplicates("CityID"); inc=rep[["CityID","income"]].drop_duplicates("CityID")
     p=p.merge(km,on="CityID",how="left").merge(inc,on="CityID",how="left"); p["kg"]=p.koppen.astype(str).str[0]
     p=p[p.year>=2000].copy(); n=p.groupby("CityID").year.transform("count"); p=p[n>=3].copy()
@@ -233,7 +233,7 @@ if HAVE_PANEL:
     def size_between(sub):
         cs=sub.groupby("CityID").agg(u=("uhi_obs","mean"),lp=("lp","first"),c=("country","first")).reset_index().dropna()
         m=smf.ols("u ~ lp",data=cs).fit(cov_type="cluster",cov_kwds={"groups":pd.factorize(cs.c)[0]}); return round(m.params["lp"],3),round(m.pvalues["lp"],3)
-    pfull=pd.read_csv(IN+"hist_stage3_panel.csv").dropna(subset=["uhi_obs","ln_popdensity"]).merge(rep[["CityID","pop"]],on="CityID",how="left").merge(pr[["CityID","country"]],on="CityID",how="left")
+    pfull=pd.read_csv(IN+"within_city_panel.csv").dropna(subset=["uhi_obs","ln_popdensity"]).merge(rep[["CityID","pop"]],on="CityID",how="left").merge(pr[["CityID","country"]],on="CityID",how="left")
     pfull=pfull[pfull["pop"]>0].copy(); pfull["lp"]=np.log10(pfull["pop"])
     for lo in [1975,1990,1995,2000,2005]:
         sb,sp=size_between(pfull[pfull.year>=lo])

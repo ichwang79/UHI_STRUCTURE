@@ -17,7 +17,7 @@ density alone ("Minus both"), which is the specification comparable to the paper
 `si_robustness_suite.py` density-only rows. All are entity+year fixed-effects panel regressions,
 clustered on UrbanId.
 
-Output: data/results/yang2024_stage3_ablation_full_regressions.csv
+Output: data/results/yang2024_within_city_full_regressions.csv
 """
 import os
 from pathlib import Path
@@ -73,7 +73,7 @@ def main():
             print(f"  {lab:10} {spec:32} density {r.get('ln_popdensity_coef', float('nan')):+.4f}"
                   f" (p {r.get('ln_popdensity_p', float('nan')):.2e})  n={r['n_obs']}")
     out = pd.DataFrame(rows)
-    dest = ROOT / "data" / "results" / "yang2024_stage3_ablation_full_regressions.csv"
+    dest = ROOT / "data" / "results" / "yang2024_within_city_full_regressions.csv"
     out.to_csv(dest, index=False)
     print(f"\nsaved {len(out)} rows -> {dest}")
 

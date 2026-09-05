@@ -54,8 +54,8 @@ Then, in this order:
 
 | script | what it builds |
 |---|---|
-| `hist_stage3.py` | the within-city epoch panel under all three rural-reference constructions |
-| `hist_stage3_daynight.py` | the same panel split into nocturnal and daytime channels |
+| `within_city_panel.py` | the within-city epoch panel under all three rural-reference constructions |
+| `within_city_panel_daynight.py` | the same panel split into nocturnal and daytime channels |
 | `si_robustness_suite.py` | the full diagnostic suite on the within-city trend — 84 checks, ~15 min |
 | `si_reference_sweeps.py` | the rural-annulus, screen-radius and lapse-rate sweeps |
 
@@ -71,7 +71,7 @@ Each reads `data/inputs/` and prints its results; the level-model scripts need o
 | `gdp_rcs.py` | the functional form of the income term, by nested tests and AIC |
 | `income_over_time.py` | how the income gradient moves across epochs |
 | `rural_reference_longdiff.py` | the long-difference check on the rural reference |
-| `yang2024_stage3_ablation.py` | the within-city response reproduced on an independent canopy-UHI product |
+| `yang2024_within_city.py` | the within-city response reproduced on an independent canopy-UHI product |
 
 
 ## Supplementary analyses added in version 1.1
@@ -115,7 +115,7 @@ Stated plainly, because a reader will otherwise look for it.
 - **The YCEO rasters.** The companion record ships the extracted per-city panel, not the source
   GeoTIFFs, and documents how it was extracted. Re-extracting needs the rasters from the SEDAC
   product page.
-- **The per-variant Yang et al. sweep.** `yang2024_stage3_ablation.py` runs its main table from
+- **The per-variant Yang et al. sweep.** `yang2024_within_city.py` runs its main table from
   the panel the companion record ships. The wide all-indicator table behind the supplementary
   sweep is not deposited; set `YANG_WIDE` if you have it, and the script skips that section
   otherwise.

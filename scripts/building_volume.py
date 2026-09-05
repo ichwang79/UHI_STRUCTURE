@@ -4,7 +4,7 @@ import os, warnings, glob
 import numpy as np, pandas as pd, statsmodels.formula.api as smf
 from supplement_paths import AIR, COMP, CODE_IN, EXTRA as XTRA
 warnings.filterwarnings("ignore")
-P = pd.read_csv(CODE_IN + "hist_stage3_panel.csv")
+P = pd.read_csv(CODE_IN + "within_city_panel.csv")
 DN = pd.read_csv(AIR + "city_uhi_epoch_panel_daynight.csv")
 G = pd.read_csv(COMP + "city_groupings.csv")
 V = pd.read_csv(XTRA + "gee_built_volume_extraction.csv")

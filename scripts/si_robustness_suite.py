@@ -1,8 +1,8 @@
 """The Supplementary Information's robustness suite for the within-city density trend.
 
-Every check here is run on the anomaly-referenced epoch panel (`hist_stage3_panel.csv`), the
+Every check here is run on the anomaly-referenced epoch panel (`within_city_panel.csv`), the
 construction adopted in Section 4.1. The earlier varying-reference panel is kept alongside it as
-`hist_stage3_panel_varying.csv`, and any number carried over from before that correction is wrong
+`within_city_panel_varying.csv`, and any number carried over from before that correction is wrong
 for the trend: this script exists so that the SI quotes nothing that predates it.
 
 The estimator is the corrected Mundlak form of Section 4.3. Year means are removed first, the
@@ -35,7 +35,7 @@ EXTRA_CONT = {"ARG": "South America", "URY": "South America", "MDA": "Europe",
 
 
 def load() -> pd.DataFrame:
-    d = pd.read_csv(ROOT / "data/inputs/hist_stage3_panel.csv")
+    d = pd.read_csv(ROOT / "data/inputs/within_city_panel.csv")
     m = pd.read_csv(P3 / "city_station_match_broad.csv")[["city_id", "country", "urban_km"]]
     _gf = next((GROUPINGS / f for f in ("city_groupings.csv", "broad_groupings_cities.csv")
             if (GROUPINGS / f).exists()), GROUPINGS / "city_groupings.csv")
@@ -314,7 +314,7 @@ def main():
               f" +/- {a.std():.4f}  max |draw| {np.abs(a).max():.3f} against observed {obs:+.3f}")
 
     print("\n=== day and night channels")
-    dn = pd.read_csv(ROOT / "data/inputs/hist_stage3_panel_daynight.csv")
+    dn = pd.read_csv(ROOT / "data/inputs/within_city_panel_daynight.csv")
     dn = dn.merge(pd.read_csv(P3 / "city_station_match_broad.csv")[["city_id", "country"]],
                   left_on="CityID", right_on="city_id", how="left")
     for ch, col in (("mean", "uhi_mean"), ("night", "uhi_night"), ("day", "uhi_day")):

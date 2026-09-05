@@ -1,6 +1,6 @@
-"""Historical Stage-3 on station UHI with clean-rural referencing, two-way FE.
-Model A: 1975-2020 (10 epochs) density + built-up.
-Model B: 1990-2020 (7 epochs) density + RCS(lnGDPpc) + built-up.
+"""The within-city epoch panel of station UHI with clean-rural referencing, two-way FE.
+The full-record model: 1975-2020 (10 epochs) density + built-up.
+The 1990 model: 1990-2020 (7 epochs) density + RCS(lnGDPpc) + built-up.
 Predictors from local GHSL(POP,BUS)+area+GDP_SUM; DV=clean-rural station UHI (5-yr window at each epoch).
 Compare to the 2000-2020-only model to show the payoff of extra within-city urbanization variation.
 
@@ -148,19 +148,19 @@ print(f"clean-rural DV panel: {len(d):,} city-epochs, {d.CityID.nunique()} citie
 print("satellite targets: ln_popdensity +0.154, frac_urban_built +1.127")
 
 MODELS=[("Baseline 2000-2020 (density+built)", [y for y in EP if y>=2000], ["ln_popdensity","frac_built"]),
-        ("Model A: 1975-2020 (density+built, 10 epochs)", EP, ["ln_popdensity","frac_built"]),
-        ("Model B: 1990-2020 FULL (density+RCS GDP+built)", [y for y in EP if y>=1990],
+        ("The full-record model: 1975-2020 (density+built, 10 epochs)", EP, ["ln_popdensity","frac_built"]),
+        ("The 1990 model: 1990-2020 FULL (density+RCS GDP+built)", [y for y in EP if y>=1990],
          ["ln_popdensity","g1","g2","g3","frac_built"])]
 for tag,epochs,cols in MODELS:
     for mode in ("anomaly","fixed","varying"):
         fit(build_dv(epochs,mode),cols,f"{tag}  [{mode} reference]")
 
 OUT=f"{INPUTS}/"
-for mode,name in (("anomaly","hist_stage3_panel.csv"),
-                  ("fixed","hist_stage3_panel_fixed.csv"),
-                  ("varying","hist_stage3_panel_varying.csv")):
+for mode,name in (("anomaly","within_city_panel.csv"),
+                  ("fixed","within_city_panel_fixed.csv"),
+                  ("varying","within_city_panel_varying.csv")):
     dd=build_dv(EP,mode)
     dd.to_csv(OUT+name,index=False)
     print(f"saved {name}: {len(dd):,} city-epochs, {dd.CityID.nunique():,} cities -> {OUT}")
-print("\nhist_stage3_panel.csv is now the anomaly-referenced panel; the previous construction is")
-print("kept alongside it as hist_stage3_panel_varying.csv.")
+print("\nwithin_city_panel.csv is now the anomaly-referenced panel; the previous construction is")
+print("kept alongside it as within_city_panel_varying.csv.")

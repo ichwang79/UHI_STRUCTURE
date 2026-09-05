@@ -37,7 +37,7 @@ def figure_structure(out=FIG / "Fig1.png"):
     z = lambda v: (v - v.mean()) / v.std()
     b["z_size"], b["z_dens"] = z(b.ln_size), z(b.ln_popdensity)
 
-    pan = pd.read_csv(IN / "hist_stage3_panel.csv").dropna(subset=["uhi_obs", "ln_popdensity"])
+    pan = pd.read_csv(IN / "within_city_panel.csv").dropna(subset=["uhi_obs", "ln_popdensity"])
     pan = pan[pan.year >= 2000]
     # No epoch-count filter: a single-epoch city is fully absorbed by its own fixed effect and
     # mathematically inert to a two-way FE slope, but Table 1's own two-way FE estimator (and
