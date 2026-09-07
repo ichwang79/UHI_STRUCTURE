@@ -78,6 +78,10 @@ def main():
     print(f"\nsaved {len(out)} rows -> {dest}")
 
     print("\n=== density-only, every Yang et al. satellite/overpass variant ===")
+    if not WIDE.exists():
+        print(f"  skipped: the wide all-indicator table is not deposited ({WIDE.name}); "
+              "set YANG_WIDE to run this section")
+        return
     xwalk = d[["CityID", "UrbanId", "year", "ln_popdensity"]].drop_duplicates()
     wide = pd.read_csv(WIDE)
     merged = xwalk.merge(wide, on=["UrbanId", "year"], how="inner")
