@@ -17,7 +17,12 @@ from supplement_paths import AIR, COMP, EXTRA
 exec(open(SP + "/building_volume.py").read().split('print("\\n== A.')[0])   # P, DN, G, V, cont, kop, M, H, D
 ctry = G.set_index("CityID")["country"].to_dict(); kf = G.set_index("CityID")["koppen"].to_dict()
 M["country"] = M.CityID.map(ctry); M["kopf"] = M.CityID.map(kf); M["kopm"] = M.CityID.map(kop)
-H = M[(M.year >= 2000) & M.ln_vol.notna()].copy() if os.environ.get("UHI_VOLUME_SAMPLE", "1") == "1" else M[M.year >= 2000].copy()
+# Two samples, as the table was built: the country, climate-zone and national designs and the
+# Köppen-group splits use all 1,108 primary-window cities (HF); the rows that add building volume
+# or night-time lights, and the station-distance, moving-boundary, annulus and landscape tests, use
+# the 1,106 cities joined to building volume (H). UHI_VOLUME_SAMPLE=0 puts every row on HF.
+HF = M[M.year >= 2000].copy()
+H = M[(M.year >= 2000) & M.ln_vol.notna()].copy() if os.environ.get("UHI_VOLUME_SAMPLE", "1") == "1" else HF.copy()
 def r(m, k): return f"{m.params[k]:+.3f} (p {m.pvalues[k]:.3f}; 95% CI {m.params[k]-1.96*m.bse[k]:+.2f} to {m.params[k]+1.96*m.bse[k]:+.2f})"
 def fe2(d, rhs, grp=None, y="uhi_obs"):
     cols = rhs.split(" + "); d = d.dropna(subset=[y] + cols + ([grp] if grp else [])).drop_duplicates(["CityID", "year"]).copy()
@@ -25,14 +30,14 @@ def fe2(d, rhs, grp=None, y="uhi_obs"):
     else: f = f"{y} ~ {rhs} + C(CityID) + C(year)"
     m = smf.ols(f, data=d).fit(cov_type="cluster", cov_kwds={"groups": d.CityID})
     return " ; ".join(f"{k} {r(m, k)}" for k in cols) + f"  n={d.CityID.nunique()}"
-NA, EU = H[H.continent == "North America"], H[H.continent == "Europe"]
-print("== city and year effects, city and year effects"); print("  NA", fe2(NA, "ln_popdensity")); print("  EU", fe2(EU, "ln_popdensity"))
+NA, EU = HF[HF.continent == "North America"], HF[HF.continent == "Europe"]
+print("== city and year effects (all 1,108 cities)"); print("  NA", fe2(NA, "ln_popdensity")); print("  EU", fe2(EU, "ln_popdensity"))
 print("== country x year / climate-zone x year effects")
 for lab, s in [("NA", NA), ("EU", EU)]:
     print(f"  {lab} country x year ", fe2(s, "ln_popdensity", "country")); print(f"  {lab} Köppen x year  ", fe2(s, "ln_popdensity", "kopf"))
 for lab, s in [("NA", M[M.continent == "North America"]), ("EU", M[M.continent == "Europe"])]:
     print(f"  {lab} Köppen x year, 1975-2020", fe2(s, "ln_popdensity", "kopf"))
-print("  USA only, Köppen x year", fe2(H[H.country == "USA"], "ln_popdensity", "kopf"))
+print("  USA only, Köppen x year", fe2(HF[HF.country == "USA"], "ln_popdensity", "kopf"))
 print("== urban-station distance bins")
 cs = pd.read_csv(AIR + "city_station_match_broad.csv").drop_duplicates("city_id")
 cid = G.dropna(subset=["city_id"]).drop_duplicates("city_id").set_index("city_id")["CityID"].to_dict()
@@ -47,7 +52,8 @@ pin = cw[cw.year == 2020][["CityID", "ID_UC_G0"]].rename(columns={"ID_UC_G0": "l
 mt = pin.merge(x5[["lineage", "year", "AREA_km2", "POP"]], on="lineage"); mt = mt[(mt.AREA_km2 > 0) & (mt.POP > 0)]; mt["m_pop"] = np.log(mt.POP)
 J = H.merge(mt[["CityID", "year", "m_pop"]], on=["CityID", "year"])
 print("  NA", fe2(J[J.continent == "North America"], "m_pop")); print("  EU", fe2(J[J.continent == "Europe"], "m_pop"))
-print("== building volume added"); print("  NA", fe2(NA, "ln_popdensity + ln_vol")); print("  EU", fe2(EU, "ln_popdensity + ln_vol"))
+NAv, EUv = H[H.continent == "North America"], H[H.continent == "Europe"]
+print("== building volume added (1,106-city sample)"); print("  NA", fe2(NAv, "ln_popdensity + ln_vol")); print("  EU", fe2(EUv, "ln_popdensity + ln_vol"))
 print("== Köppen main group only")
 for z, lab in [("C", "temperate"), ("D", "continental"), ("B", "arid")]:
     print(f"  NA {lab:11s}", fe2(NA[NA.kopm == z], "ln_popdensity"));

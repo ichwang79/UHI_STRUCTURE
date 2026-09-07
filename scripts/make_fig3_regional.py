@@ -23,10 +23,11 @@ import figstyle as fs
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA, FIG = ROOT / "data", ROOT / "figures"
+FIG.mkdir(parents=True, exist_ok=True)
 fs.use()
 
 
-def figure_regional(out=FIG / "Fig3_regional.png"):
+def figure_regional(out=FIG / "Fig3.png"):
     lit = pd.read_csv(DATA / "results" / "oke_literature_matched_coverage.csv")
     ours = lit[lit.source.str.startswith("OURS")]
 

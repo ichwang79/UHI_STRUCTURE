@@ -50,6 +50,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 from linearmodels.panel import PanelOLS
 from scipy.spatial import cKDTree
 
@@ -256,6 +257,25 @@ def main():
                                  coef=m.params[k], se=m.std_errors[k], p=m.pvalues[k],
                                  n=int(m.nobs), cities=s.index.get_level_values(0).nunique()))
             print(f"{name:18}{line}")
+
+    # Joint (Mundlak) model by element on the primary window: the within-city term and the
+    # between-city term estimated together, on the same city sample as M0 above. Table 1 of the
+    # main text quotes the night between-city term from this block.
+    print(f"\n{'=' * 82}\nJOINT MODEL by element  --  2000-2020, within and between terms "
+          f"(year-demeaned, city-clustered 95% CI)\n{'=' * 82}")
+    sub = d[d.year >= 2000]
+    for lab in ("day", "mean", "night"):
+        s = sub.dropna(subset=[f"uhi_{lab}", "ln_popdensity"]).drop_duplicates(["CityID", "year"]).copy()
+        for v in (f"uhi_{lab}", "ln_popdensity"):
+            s["t_" + v] = s[v] - s.groupby("year")[v].transform("mean")
+        bar = s.groupby("CityID")["t_ln_popdensity"].transform("mean")
+        s["between"], s["within"] = bar, s["t_ln_popdensity"] - bar
+        m = sm.OLS(s[f"t_uhi_{lab}"], sm.add_constant(s[["within", "between"]])).fit(
+            cov_type="cluster", cov_kwds={"groups": pd.factorize(s.CityID)[0]})
+        ci = m.conf_int()
+        print(f"  {lab:6} within {m.params['within']:+.3f} ({ci.loc['within', 0]:+.2f} to {ci.loc['within', 1]:+.2f})"
+              f"  between {m.params['between']:+.3f} ({ci.loc['between', 0]:+.2f} to {ci.loc['between', 1]:+.2f})"
+              f"  n = {s.CityID.nunique():,} cities")
 
     os.makedirs(OUT, exist_ok=True)
     pd.DataFrame(rows).to_csv(OUT + "within_city_panel_daynight.csv", index=False)

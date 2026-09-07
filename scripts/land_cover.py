@@ -32,9 +32,10 @@ for reg in ["North America", "Europe"]:
 print("== night, 1975-2020 (built-up share only; NDVI starts 2000)")
 L = N.dropna(subset=["uhi_night", "ln_popdensity", "frac_built"])
 print("  ", fe(L, "ln_popdensity", "uhi_night")); print("  ", fe(L, "ln_popdensity + frac_built", "uhi_night"))
-print("== daily mean, 2000-2020")
-Dm = H.dropna(subset=["uhi_obs", "ln_popdensity", "frac_built"])
+print("== daily mean, 2000-2020 (the full 1,108-city within-city panel)")
+Hm = base.merge(w, on=["CityID", "year"], how="left"); Hm = Hm[Hm.year >= 2000]
+Dm = Hm.dropna(subset=["uhi_obs", "ln_popdensity", "frac_built"])
 print("  ", fe(Dm, "ln_popdensity", "uhi_obs")); print("  ", fe(Dm, "ln_popdensity + frac_built", "uhi_obs"))
-Dn = H.dropna(subset=["uhi_obs", "ln_popdensity", "ndvi_core", "ndvi_contrast"])
+Dn = Hm.dropna(subset=["uhi_obs", "ln_popdensity", "ndvi_core", "ndvi_contrast"])
 print("  ", fe(Dn, "ln_popdensity + ndvi_core", "uhi_obs")); print("  ", fe(Dn, "ln_popdensity + ndvi_contrast", "uhi_obs"))
 g = full.groupby("CityID"); print("== within-city SD: share", round(float((full.frac_built - g.frac_built.transform("mean")).std()), 3), "core NDVI", round(float((full.ndvi_core - g.ndvi_core.transform("mean")).std()), 3))

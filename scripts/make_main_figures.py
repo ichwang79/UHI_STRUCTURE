@@ -24,6 +24,8 @@ import figstyle as fs
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 IN, DATA, FIG = ROOT / "data/inputs", ROOT / "data", ROOT / "figures"
+FIG.mkdir(parents=True, exist_ok=True)
+RES = ROOT / "data/results"          # written by oke_analysis.py
 fs.use()
 
 
@@ -107,8 +109,8 @@ def figure_structure(out=FIG / "Fig1.png"):
 
 
 # ---------------------------------------------------------------- Fig. 6
-def figure_recalibration(out=FIG / "Fig6.png"):
-    d = pd.read_csv(DATA / "oke_literature_matched_coverage.csv")
+def figure_recalibration(out=FIG / "Fig4.png"):
+    d = pd.read_csv(RES / "oke_literature_matched_coverage.csv")
     ours = d[d.source.str.startswith("OURS")]
     lit = d[~d.source.str.startswith("OURS")]
 
@@ -167,9 +169,9 @@ def figure_sizelaw(out=FIG / "Fig2.png"):
     c = c[c["pop"] > 0].copy()
     c["lp"] = np.log10(c["pop"])
     c["uhi_max"] = 2 * c.uhi_tavg - c.uhi_tmin
-    fits = pd.read_csv(DATA / "oke_size_law_fits.csv")
-    zones = pd.read_csv(DATA / "oke_size_law_by_climate_zone.csv")
-    dist = pd.read_csv(DATA / "oke_station_distance_sensitivity.csv")
+    fits = pd.read_csv(RES / "oke_size_law_fits.csv")
+    zones = pd.read_csv(RES / "oke_size_law_by_climate_zone.csv")
+    dist = pd.read_csv(RES / "oke_station_distance_sensitivity.csv")
 
     eba = pd.read_csv(DATA / "eba_uhi_level_tmin.csv")   # nocturnal, matches the rest of this figure
 
@@ -282,7 +284,7 @@ def figure_sizelaw(out=FIG / "Fig2.png"):
 
 
 # ---------------------------------------------------------------- Fig. 5
-def figure_geography(out=FIG / "Fig5.png"):
+def figure_geography(out=FIG / "extra_geography.png"):
     """Where the sample is, and what it measures there — the scope within which the
     scaling relationships hold. Basemap: Natural Earth 110 m land (public domain)."""
     import geopandas as gpd
@@ -320,7 +322,7 @@ def figure_geography(out=FIG / "Fig5.png"):
 
 
 # ---------------------------------------------------------------- Fig. 3
-def figure_income(out=FIG / "Fig3.png"):
+def figure_income(out=FIG / "extra_income.png"):
     """Income enters the UHI nonlinearly, and its cross-city grip has tightened.
     Panels a-b from gdp_rcs.py; panels c-d from income_over_time.py."""
     cur = pd.read_csv(DATA / "gdp_rcs_partial_effect.csv")
@@ -510,10 +512,18 @@ def figure_groupings(out=FIG / "FigS1.png"):
 
 
 if __name__ == "__main__":
-    figure_structure()
-    figure_sizelaw()
+    figure_structure()        # Fig. 1
+    figure_sizelaw()          # Fig. 2  (Fig. 3 is drawn by make_fig3_regional.py)
+    figure_recalibration()    # Fig. 4
+    if (DATA / "uhi_by_grouping.csv").exists():
+        figure_groupings()    # Supplementary Fig. S1
+    else:
+        print("  Supplementary Fig. S1 skipped: data/uhi_by_grouping.csv not built (see README)")
+    # not display items of the submitted manuscript; drawn only if their inputs exist
     figure_income()
-    figure_seasonal()
-    figure_geography()
-    figure_recalibration()
-    figure_groupings()
+    if (DATA / "seasonal_uhi_by_zone.csv").exists():
+        figure_seasonal()
+    try:
+        figure_geography()
+    except Exception as e:
+        print(f"  extra geography map skipped: {e}")

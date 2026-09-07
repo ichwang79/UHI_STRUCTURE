@@ -70,13 +70,15 @@ Each reads `data/inputs/` and prints its results; the level-model scripts need o
 | script | question |
 |---|---|
 | `oke_analysis.py` | the population-size law, by element, region, climate zone and development phase |
-| `size_law_diagnostics.py` | RESET, Breusch–Pagan with the HC3 slope, and the slope after dropping the 1% most influential cities (Cook's distance), with intervals — the diagnostic rows of Supplementary Table S1(a) |
+| `size_law_diagnostics.py` | the sample and specification rows of Supplementary Table S1(a): RESET, Breusch–Pagan with the HC3 slope, Cook's distance, a random-country-intercept model, one region excluded at a time, the income-control forms, the permutation null and the size-class coverage |
 | `mundlak_ladder.py` | between- and within-city density coefficients estimated jointly |
 | `extreme_bounds.py` | which drivers survive an extreme-bounds search over covariate combinations |
 | `gdp_rcs.py` | the functional form of the income term, by nested tests and AIC |
 | `income_over_time.py` | how the income gradient moves across epochs |
 | `rural_reference_longdiff.py` | the long-difference check on the rural reference |
 | `yang2024_within_city.py` | the within-city response reproduced on an independent canopy-UHI product |
+| `yceo_within_city.py` | the same joint model on the YCEO v4 surface heat island, night and day — the cross-instrument row of Supplementary Table S1(b) |
+| `groupings.py` | median UHI by continent, income group, Köppen zone and country with bootstrap intervals — the table behind Supplementary Fig. S1 |
 
 
 ## Supplementary analyses added in version 1.1
@@ -90,7 +92,7 @@ seasonal station-season file and panels). They resolve paths through `scripts/su
 |---|---|
 | `building_volume.py` | building-volume row of Table 1 and Supplementary Table S6 (volume part) |
 | `land_cover.py` | land-cover rows of Supplementary Table S6 |
-| `regional_gap.py` | Supplementary Table S2 (the regional gap under nine designs) and the room-to-grow split of S1.4 |
+| `regional_gap.py` | Supplementary Table S2 (the regional gap under nine designs) and the room-to-grow split of S1.4. The country, climate-zone and national designs run on all 1,108 primary-window cities; the rows that add building volume or night-time lights, and the station-distance, moving-boundary, annulus and landscape tests, on the 1,106 cities joined to building volume, as the table states |
 | `level_intervals.py` | Supplementary Table S3, the Mundlak terms by element in Table 1, Supplementary Table S5, the seasonal level means of S1.7 |
 | `panel_intervals.py` | the balanced-panel slopes and income-spline percentiles of Supplementary Table S4, the Driscoll–Kraay and GHCN-M intervals of Supplementary Table S1 |
 | `seasonal_table.py` | Table 2 and the seasonal rows of Supplementary Table S2 |
@@ -108,8 +110,8 @@ filenames across the two records; neither is run directly.
 
 | script | output |
 |---|---|
-| `make_main_figures.py` | the main display items |
-| `make_fig3_regional.py` | the regional structure figure — needs `si_robustness_suite.py` first |
+| `make_main_figures.py` | `figures/Fig1.png`, `Fig2.png`, `Fig4.png` and, after `groupings.py`, `FigS1.png`; needs `oke_analysis.py`, `extreme_bounds.py` and `gdp_rcs.py` first |
+| `make_fig3_regional.py` | `figures/Fig3.png`, the regional structure figure — needs `si_robustness_suite.py` first |
 
 ## What this cannot rebuild
 
