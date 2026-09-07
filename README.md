@@ -24,6 +24,10 @@ export UHI_AIR_DATA=/path/to/air_record
 export UHI_AIR_COMPANION=/path/to/companion
 ```
 
+The companion record's `companion_inputs.zip` must be unpacked so that its files sit directly in the
+companion directory (`unzip -j companion_inputs.zip -d /path/to/companion`), or set
+`UHI_EXTRA_INPUTS` to wherever they were unpacked; the supplementary scripts look for them there.
+
 Every script resolves a filename the same way — the air record first, then the companion — through
 `scripts/uhi_paths.py`. Passing `--air` and `--companion` on the command line overrides the
 environment. If both records are unpacked into one directory, set both variables to it.
