@@ -85,3 +85,33 @@ for label, X in [("size + income group effects", pd.concat([S[["lp"]].astype(flo
 rng = np.random.default_rng(20260818)
 perm = np.array([sm.OLS(y, sm.add_constant(rng.permutation(S.lp.values))).fit().params[1] for _ in range(500)])
 print(f"  {'permutation of population (500 draws)':48} null {perm.mean():+.2f} ± {perm.std():.2f} against {base.params[1]:+.2f} observed")
+
+# ---- level quantities quoted in the text and in Table 1 / Fig. 1 ----
+print("\nlevel quantities on the night sample")
+Sz = S.dropna(subset=["ln_popdensity"]).copy()
+Sz["z_size"] = (Sz.lp - Sz.lp.mean()) / Sz.lp.std(); Sz["z_dens"] = (Sz.ln_popdensity - Sz.ln_popdensity.mean()) / Sz.ln_popdensity.std()
+gz = pd.factorize(Sz.country)[0]
+for label, cols in [("density alone, per SD", ["z_dens"]), ("size and density together, per SD", ["z_size", "z_dens"])]:
+    m = fit_cluster(Sz.uhi_tmin.values, sm.add_constant(Sz[cols].astype(float)).values, gz); ci = m.conf_int()
+    print("  " + label + ": " + "; ".join(f"{c} {m.params[i+1]:+.3f} ({ci[i+1][0]:+.2f} to {ci[i+1][1]:+.2f})" for i, c in enumerate(cols)) + f", n = {len(Sz)}")
+m = fit_cluster(Sz.uhi_tmin.values, sm.add_constant(Sz[["lp", "ln_popdensity"]].astype(float)).values, gz); ci = m.conf_int()
+print(f"  density with size held, per log unit: {m.params[2]:+.3f} ({ci[2][0]:+.2f} to {ci[2][1]:+.2f}); size {m.params[1]:+.3f} ({ci[1][0]:+.2f} to {ci[1][1]:+.2f}), n = {len(Sz)}")
+rng = np.random.default_rng(20260818)
+v, w = S.uhi_tmin.values, S["pop"].values
+def wmean(idx): return np.average(v[idx], weights=w[idx])
+bs = np.array([wmean(rng.integers(0, len(v), len(v))) for _ in range(2000)])
+bm = np.array([np.median(v[rng.integers(0, len(v), len(v))]) for _ in range(2000)])
+print(f"  night level: city median {np.median(v):+.2f} ({np.percentile(bm, 2.5):+.2f} to {np.percentile(bm, 97.5):+.2f}); population-weighted mean {wmean(np.arange(len(v))):+.2f} ({np.percentile(bs, 2.5):+.2f} to {np.percentile(bs, 97.5):+.2f}); share of cities with a negative night level {100*(v<0).mean():.0f}%")
+d2 = d.dropna(subset=["uhi_tmin", "uhi_tavg"]).copy(); d2["uhi_day"] = 2 * d2.uhi_tavg - d2.uhi_tmin
+for reg in ["North America", "Europe", "Asia"]:
+    s = d2[d2.continent == reg]
+    if len(s) < 20: continue
+    out = []
+    for col, lab in [("uhi_tmin", "night"), ("uhi_day", "day"), ("uhi_tavg", "daily mean")]:
+        x = s[col].values; se = x.std(ddof=1) / np.sqrt(len(x)); out.append(f"{lab} {x.mean():+.2f} ({x.mean()-1.96*se:+.2f} to {x.mean()+1.96*se:+.2f})")
+    print(f"  {reg} mean level, n = {len(s)}: " + "; ".join(out))
+print("  size law by region, country-clustered:")
+for reg, col in [("North America", "uhi_tmin"), ("Europe", "uhi_tmin"), ("Asia", "uhi_tavg"), ("North America", "uhi_tavg"), ("Europe", "uhi_tavg")]:
+    s = d[(d.continent == reg)].dropna(subset=[col, "lp"])
+    m = fit_cluster(s[col].values, sm.add_constant(s[["lp"]].astype(float)).values, pd.factorize(s.country)[0]); ci = m.conf_int()
+    print(f"    {reg:14} {col}: {m.params[1]:+.3f} ({ci[1][0]:+.2f} to {ci[1][1]:+.2f}), n = {len(s)}")

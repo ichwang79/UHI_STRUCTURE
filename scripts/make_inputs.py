@@ -37,7 +37,11 @@ Add ``--verify-only`` to check an existing data/inputs/ without rebuilding.
 Verification
 ------------
 The rebuilt inputs must reproduce Table "oke_size_law_fits.csv" exactly:
-    daytime (TMAX)    -0.180     mean (TAVG)   +0.216     nighttime (TMIN)  +0.629
+    daytime (TMAX)    -0.163     mean (TAVG)   +0.234     nighttime (TMIN)  +0.655
+
+(These are the values on the deduplicated inputs of the reproduction bundle, in which each
+physical urban station enters once; on the public records before that filter they read
+-0.180 / +0.216 / +0.629 on 630 / 866 / 630 cities.)
 Any deviation is reported and the script exits non-zero.
 """
 from __future__ import annotations
@@ -53,8 +57,8 @@ ROOT = HERE.parent
 OUT = ROOT / "data" / "inputs"
 AUX = ROOT / "data" / "aux" / "city_lst_aux.csv"
 
-PUBLISHED = {"daytime (TMAX)": -0.180, "mean (TAVG)": 0.216, "nighttime (TMIN)": 0.629}
-PUBLISHED_N = {"daytime (TMAX)": 630, "mean (TAVG)": 866, "nighttime (TMIN)": 630}
+PUBLISHED = {"daytime (TMAX)": -0.163, "mean (TAVG)": 0.234, "nighttime (TMIN)": 0.655}
+PUBLISHED_N = {"daytime (TMAX)": 506, "mean (TAVG)": 685, "nighttime (TMIN)": 506}
 
 # The inputs come from two deposits. They may sit in one directory (unpack both there) or in two.
 AIR_FILES = ["annual_by_elem.csv", "city_station_match_longrecord.csv", "city_uhi_epoch_panel.csv",

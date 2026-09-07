@@ -33,7 +33,7 @@ print("continents:", H.groupby('continent').CityID.nunique().to_dict())
 def fe(d, rhs, y="uhi_obs"):
     d = d.dropna(subset=[y] + rhs.split(" + ")).copy()
     f = smf.ols(f"{y} ~ {rhs} + C(CityID) + C(year)", data=d).fit(cov_type="cluster", cov_kwds={"groups": d.CityID})
-    return " | ".join(f"{k} {f.params[k]:+.3f} (p {f.pvalues[k]:.3f})" for k in rhs.split(" + ")) + f"  n={d.CityID.nunique()}"
+    return " | ".join(f"{k} {f.params[k]:+.3f} ({f.params[k]-1.96*f.bse[k]:+.2f} to {f.params[k]+1.96*f.bse[k]:+.2f}; p {f.pvalues[k]:.3f})" for k in rhs.split(" + ")) + f"  n={d.CityID.nunique()}"
 
 def mundlak(d, keys, y="uhi_obs", extra=()):
     cols = [y, *keys, *extra]

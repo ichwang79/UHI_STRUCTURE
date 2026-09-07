@@ -15,6 +15,17 @@ Each DOI below is a Zenodo concept DOI and resolves to the current version.
 | **Air-temperature UHI record** | [10.5281/zenodo.22006932](https://doi.org/10.5281/zenodo.22006932) | CC-BY-4.0 |
 | **Companion city panels** | [10.5281/zenodo.22108287](https://doi.org/10.5281/zenodo.22108287) | CC-BY-4.0 |
 
+## The inputs the manuscript was computed on
+
+The manuscript's numbers were computed on the inputs frozen in its Zenodo reproduction bundle,
+in which the city–station matching of the air record has been deduplicated: where two
+neighbouring GHS-UCDB cities resolved to the same physical GHCN station, only the city whose
+centroid is nearest is kept (the removed cities are listed in the bundle's
+`duplicate_station_matches_dropped.csv`). The reference values that `make_inputs.py` and
+`income_over_time.py` check against are those deduplicated values. Run on the public records
+before that filter, the scripts still run but the two self-checks report the pre-filter fits
+(night size law +0.629 on 630 cities instead of +0.655 on 506) as mismatches.
+
 ## Getting the data
 
 Download both records and point the scripts at them. They may live in one directory or two.

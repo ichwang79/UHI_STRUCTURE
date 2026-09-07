@@ -63,11 +63,14 @@ MIN_RURAL = 3          # rural references required
 SCREEN_KM = 12.0       # rural station must be this far from any other city
 LAPSE = 6.5 / 1000     # C per metre
 
-PUBLISHED_GRADIENT = {2000: 0.159, 2005: 0.209, 2010: 0.347, 2015: 0.426, 2020: 0.334}
+# reference values on the deduplicated inputs of the reproduction bundle (each physical urban
+# station enters once); on the public records before that filter the gradient read
+# 0.159 / 0.209 / 0.347 / 0.426 / 0.334.
+PUBLISHED_GRADIENT = {2000: 0.180, 2005: 0.276, 2010: 0.384, 2015: 0.389, 2020: 0.332}
 PUBLISHED_TERCILE = {
-    "lower-GDP":  {2000: 0.12, 2005: 0.13, 2010: 0.17, 2015: 0.06, 2020: 0.18},
-    "mid-GDP":    {2000: 0.05, 2005: 0.10, 2010: 0.12, 2015: 0.07, 2020: 0.07},
-    "higher-GDP": {2000: 0.28, 2005: 0.31, 2010: 0.41, 2015: 0.33, 2020: 0.33},
+    "lower-GDP":  {2000: 0.00, 2005: 0.03, 2010: 0.07, 2015: 0.00, 2020: 0.08},
+    "mid-GDP":    {2000: 0.12, 2005: 0.15, 2010: 0.14, 2015: 0.15, 2020: 0.15},
+    "higher-GDP": {2000: 0.28, 2005: 0.31, 2010: 0.47, 2015: 0.34, 2020: 0.37},
 }
 TERCILES = ["lower-GDP", "mid-GDP", "higher-GDP"]
 
