@@ -19,6 +19,12 @@ for cov, kw in [("kernel", dict(kernel="bartlett")), ("clustered", dict(cluster_
 print("== GHCN-M v4 QCU within-city crosscheck (Mundlak, city-clustered)")
 q = pd.read_csv(COMP + "ghcnm_qcu_density_epoch_panel.csv").rename(columns={"city_id": "CityID", "epoch": "year"})
 q = q.dropna(subset=["ghcnm_uhi_C", "ghcnd_uhi_C", "ln_popdensity"])
+# The GHCN-M cross-check panel was matched before the duplicate-urban-station rule of the air record.
+# UHI_DROP_DUPLICATES=1 removes the cities that rule dropped (duplicate_station_matches_dropped.csv).
+if os.environ.get("UHI_DROP_DUPLICATES", "0") == "1":
+    _dd = pd.read_csv(AIR + "duplicate_station_matches_dropped.csv")
+    q = q[~q.CityID.isin(set(_dd.dropped_city_id))]
+    print("  (duplicate-match cities removed from the GHCN-M panel)")
 def mund(s, y):
     s = s.copy()
     for v in [y, "ln_popdensity"]: s["t_" + v] = s[v] - s.groupby("year")[v].transform("mean")
