@@ -4,7 +4,7 @@ partial effects at the 90th and 99th percentiles)."""
 import os, sys, warnings, numpy as np, pandas as pd, statsmodels.formula.api as smf
 warnings.filterwarnings("ignore")
 SP = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, SP)
-from supplement_paths import COMP, CODE_IN, CODE_SCRIPTS
+from supplement_paths import AIR, COMP, CODE_IN, CODE_SCRIPTS
 IN = CODE_IN
 def ci(e, s): return f"{e:+.3f} (se {s:.3f}, 95% CI {e-1.96*s:+.2f} to {e+1.96*s:+.2f})"
 
